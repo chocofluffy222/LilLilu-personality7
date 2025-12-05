@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>あなたの隠れた魅力はなんだ！？ ～リルリルと仲間たちキャラクター診断～</title>
+    
+    <!-- Google Fonts: 手書き風で可愛い「Zen Maru Gothic」を使用 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* パステルカラー定義 */
+            --color-lillilu: #ffb3ba; /* パステル赤 */
+            --color-rosy: #ffdfba;    /* パステルピンク（少しオレンジ寄りにして区別）あるいは薄ピンク */
+            --color-rosy-real: #ffccdd; /* よりピンクらしく */
+            --color-finn: #baffc9;    /* パステルグリーン */
+            --color-bonbon: #ffdfba;  /* パステルオレンジ */
+            --color-espie: #bae1ff;   /* パステルスカイブルー */
+            --color-levy: #e2baff;    /* パステルパープル */
+            --color-gigi: #ffffba;    /* パステルイエロー（指定がないため追加） */
+            
+            --text-main: #5a5a5a;     /* 真っ黒を使わず、濃いグレー */
+            --text-sub: #7a7a7a;
+            --bg-dot: #f0f8ff;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* 手書き風水玉背景（CSSで再現） */
+            background-color: #fffbf0;
+            background-image: 
+                radial-gradient(circle, #ffe4e1 15%, transparent 16%),
+                radial-gradient(circle, #e0ffff 15%, transparent 16%);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 40px 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            text-align: center;
+            position: relative;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: #ff8fab;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--text-main);
+        }
+
+        /* 画像プレースホルダー */
+        .img-placeholder {
+            width: 100%;
+            max-width: 300px;
+            aspect-ratio: 1 / 1; /* 正方形 */
+            background-color: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 15px;
+            margin: 0 auto 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            color: #aaa;
+        }
+        
+        .img-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ボタンデザイン */
+        .btn {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 15px auto;
+            padding: 15px;
+            border: 2px solid #ffd1dc;
+            background-color: #fff;
+            color: var(--text-main);
+            border-radius: 30px;
+            font-size: 1rem;
+            font-family: 'Zen Maru Gothic', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 0 #ffd1dc;
+        }
+
+        .btn:hover {
+            background-color: #fff0f5;
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #ffd1dc;
+        }
+
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        /* 画面切り替え用 */
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 結果画面のデザイン */
+        .result-header {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 10px 0;
+            color: var(--text-main);
+        }
+        
+        .result-type {
+            font-size: 1.1rem;
+            color: #ff8fab;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .result-charm {
+            background-color: #fdf5e6;
+            padding: 15px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 2px dotted #ffcc99;
+        }
+
+        .result-charm h3 {
+            font-size: 1rem;
+            color: #ff9966;
+            margin-top: 0;
+        }
+
+        .advice-box {
+            text-align: left;
+            margin: 20px 0;
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+
+        .nice-points {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .nice-points li {
+            background: #e6e6fa;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #6a5acd;
+        }
+
+        /* 円グラフ */
+        .chart-container {
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            position: relative;
+            border-radius: 50%;
+            /* conic-gradientはJSで動的に設定します */
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        
+        .chart-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%;
+            height: 60%;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-sub);
+        }
+
+        /* シェアボタン群 */
+        .share-area {
+            margin-top: 30px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .share-btn {
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .share-line { background-color: #06c755; }
+        .share-insta { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+        .share-threads { background-color: #000; } /* Threadsは黒 */
+
+        /* 分析中画面 */
+        .loading-text {
+            font-size: 1.5rem;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- スタート画面 -->
+        <div id="start-screen" class="screen active">
+            <h1>あなたの隠れた魅力はなんだ！？<br>～リルリルと仲間たちキャラクター診断～</h1>
+            <div class="img-placeholder">
+                <img src="top_image.png" alt="トップ画像" onerror="this.style.display='none'; this.parentElement.innerText='画像エリア(正方形)'">
+            </div>
+            <p>12の質問から、あなたにぴったりの7問を厳選！<br>超・高精度ルート分岐システムで診断します。</p>
+            <button class="btn" onclick="startQuiz()">診断スタート！</button>
+        </div>
+
+        <!-- 質問画面 -->
+        <div id="quiz-screen" class="screen">
+            <div class="img-placeholder">
+                <!-- ここに質問ごとの画像を挿入可能 -->
+                <img id="question-image" src="" alt="質問画像" onerror="this.style.display='none'; this.parentElement.innerText='画像エリア(正方形/4:5)'">
+            </div>
+            <h2 id="question-text">質問文がここに入ります</h2>
+            <div id="answers-area">
+                <!-- ボタンがJSで生成されます -->
+            </div>
+            <p style="margin-top:20px; font-size:0.8rem; color:#aaa;">Q. <span id="current-q-num">1</span> / 7</p>
+        </div>
+
+        <!-- 分析中画面 -->
+        <div id="loading-screen" class="screen">
+            <div class="loading-text">分析中...</div>
+            <p>あなたの心の形を計算しています</p>
+        </div>
+
+        <!-- 結果画面 -->
+        <div id="result-screen" class="screen">
+            <div class="img-placeholder">
+                <img id="result-image" src="" alt="キャラクター画像" onerror="this.style.display='none'; this.parentElement.innerText='キャラ画像エリア(正方形)'">
+            </div>
+            
+            <div class="result-type" id="result-catchphrase">キャッチコピー</div>
+            <div class="result-header" id="result-name">Name</div>
+            
+            <div class="result-charm">
+                <h3>[ 隠れた魅力 ]</h3>
+                <div id="result-charm-text">魅力テキスト</div>
+                <p id="result-desc" style="margin-top:10px; font-size:0.9rem;">説明文</p>
+            </div>
+
+            <div class="advice-box">
+                <strong>【アドバイス】</strong><br>
+                <span id="result-advice">アドバイス本文</span>
+            </div>
+
+            <div style="text-align: left;">
+                <strong>【ステキなところ】</strong>
+                <ul class="nice-points" id="result-points">
+                    <li>AAA</li>
+                    <li>BBB</li>
+                    <li>CCC</li>
+                </ul>
+            </div>
+
+            <div class="chart-container" id="chart-pie">
+                <div class="chart-center">あなたの<br>カラー</div>
+            </div>
+
+            <button class="btn" onclick="location.reload()">もう一度診断する</button>
+            
+            <div class="share-area">
+                <a href="#" id="share-line" class="share-btn share-line" target="_blank">LINE</a>
+                <a href="#" id="share-threads" class="share-btn share-threads" target="_blank">Threads</a>
+                <a href="#" id="share-insta" class="share-btn share-insta" target="_blank">Instagram</a>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // キャラクターデータ定義
+        const characters = {
+            lillilu: {
+                id: 'lillilu',
+                name: 'LilLilu（リルリル）',
+                color: '#ffb3ba', // パステル赤
+                catchphrase: '🤡 雨上がりの太陽タイプ',
+                charm: '無邪気な愛され力',
+                desc: 'あなたはそこにいるだけで周りを明るくする太陽のような存在！ちょっとしたユーモアで、みんなの心をフワッと軽くしているよ。',
+                advice: 'まわりの人がホッコリとするような雰囲気をもっているみたい。優しい子心で自分の気持ちよりも、つい相手の気持ちを優先しがち。すこし疲れた日は、誰かのためだけじゃなくて、自分のためにも「やさしくしてあげる時間」をつくってあげてね。',
+                points: ['愛嬌', '親しみやすい', '朗らか']
+            },
+            rosy: {
+                id: 'rosy',
+                name: 'Rosy（ロージー）',
+                color: '#ffccdd', // パステルピンク
+                catchphrase: '🐰 春のそよ風タイプ',
+                charm: '天真爛漫なハッピーオーラ',
+                desc: '喜びをシェアする天才！素敵なものを見つけたら一番に誰かに伝えるその純粋さが、みんなの日常をカラフルにしているよ。',
+                advice: '季節の変化や、身近な“ときめき”を見つけるのが上手なあなた。うれしかったことを誰かとシェアしたくなるのもロージーっぽいところ。ひとりで抱え込まずに、うれしかったことも、ちょっぴりさみしかったことも、信頼できる人におすそ分けしてみると、もっと心が軽くなりそう。',
+                points: ['感性豊か', '天真爛漫', '天然']
+            },
+            finn: {
+                id: 'finn',
+                name: 'Finn（フィン）',
+                color: '#baffc9', // パステルグリーン
+                catchphrase: '🐸 夏の波しぶきタイプ',
+                charm: 'はじける開放感',
+                desc: 'あなたは心の壁を取り払う天才！「ようこそ！」というあなたの明るい一言が、みんなの心のドアを開けているよ。',
+                advice: '本当はちょっぴりドキドキしやすいのに、いざというときは笑顔で場をつなげるフィン気質のあなた。うまく話そうとしなくても大丈夫。「きいてみたい」と思ったことを素直にきいてみるだけで、十分にステキなコミュニケーションになっているよ。',
+                points: ['ムードメーカー', '好奇心', '冒険家']
+            },
+            bonbon: {
+                id: 'bonbon',
+                name: 'Bonbon（ボンボン）',
+                color: '#ffdfba', // パステルオレンジ
+                catchphrase: '🐻 秋の夕焼けタイプ',
+                charm: 'ひたむきな信頼感',
+                desc: 'あなたは言葉より行動で示す人。コツコツ頑張るその背中に、みんなは「自分も頑張ろう！」と勇気をもらっているよ。',
+                advice: '自分なりのペースで、目の前のことに一生懸命になれるタイプ。結果よりもプロセスをだいじにできるのがあなたらしさ。ときどき立ち止まって、『ここまで来た自分、よくやってる！』と、ちいさなガッツポーズをしてあげてね。',
+                points: ['努力家', '誠実', 'マイペース']
+            },
+            espie: {
+                id: 'espie',
+                name: 'Espie（エスピー）',
+                color: '#bae1ff', // パステルスカイブルー
+                catchphrase: '🐘 冬の毛布タイプ',
+                charm: '深くて温かい包容力',
+                desc: '言葉にならない声を聞くやさしさの持ち主。アドバイスより、ただ静かに寄り添ってくれるその温もりに、多くの人が救われているよ。',
+                advice: 'あなたは、困っている人や不安そうな人を見つけると、そっと寄り添いたくなるエスピー気質。支える側に回ることが多いからこそ、自分の不安や疲れを後回しにしてしまう一面も。休みの日は、毛布をかぶって、ゆっくり休んでね。',
+                points: ['包容力', '共感力', 'あったかい']
+            },
+            gigi: {
+                id: 'gigi',
+                name: 'Gigi（ジジ）',
+                color: '#ffffba', // パステルイエロー (結果色用)
+                catchphrase: '🦒 夜明けの朝日タイプ',
+                charm: 'おだやかな見守り力',
+                desc: '一歩引いて全体を見る安心感の持ち主。みんなが気づかない小さな変化にも気づく賢さと優しさに支えられている人がいるよ。',
+                advice: 'あなたは、感情に流され過ぎず、少し高いところから全体を見守るような視点を持っている人。だからこそ、『自分の気持ち』を後回しにしがちな一面も。ときどきは、自分の本音を吐き出す時間を作ってみてね。ジジみたいに、ストレス発散に、ジェットコースターに乗るのもひとつの手。',
+                points: ['俯瞰', '冷静さ', '見守り']
+            },
+            levy: {
+                id: 'levy',
+                name: 'Levy（レヴィ）',
+                color: '#e2baff', // パステルパープル
+                catchphrase: '🦄 夜空の星タイプ',
+                charm: '静かなる癒やしの光',
+                desc: '暗闇でこそ輝く希望の星。落ち込んでいる時にあなたがかけてくれる優しい言葉は、迷っている人の道しるべになっているよ。',
+                advice: 'にぎやかな場よりも、少人数や落ち着いた時間のなかで、自分らしさが光るタイプ。じっくり考えたり、ひとりの世界にひたる時間も大切な栄養。『今日はどんな小さな光があったかな？』と、寝る前にひとつだけ思い出してみると、レヴィらしい穏やかな時間が育っていきそう。',
+                points: ['ミステリアス', '静かな情熱', '直感']
+            }
+        };
+
+        // 全12問の質問データ (A, B, C の選択肢に対応するキャラIDを設定)
+        const questionPool = [
+            {
+                q: "友だちが落ち込んでいたら？",
+                options: [
+                    { text: "そっと寄り添って、ゆっくり話を聞く", type: "espie" },
+                    { text: "気分転換に誘って、一緒に楽しむ", type: "rosy" },
+                    { text: "いいところを伝えて、励ます", type: "bonbon" }
+                ]
+            },
+            {
+                q: "大切な人の成功を聞いたら？",
+                options: [
+                    { text: "自分のことみたいに喜んじゃう！", type: "rosy" },
+                    { text: "「よくがんばったね」って気持ちを受け止める", type: "espie" },
+                    { text: "次はどんな目標か楽しみになる", type: "levy" }
+                ]
+            },
+            {
+                q: "気持ちがちょっとすれ違っちゃった…",
+                options: [
+                    { text: "まずは「どうしたの？」って聞いてみる", type: "finn" },
+                    { text: "自分の気持ちを、そっと打ち明ける", type: "lillilu" },
+                    { text: "少し時間をおいて、相手のタイミングを待つ", type: "gigi" }
+                ]
+            },
+            {
+                q: "自分がしんどい時のお守りは？",
+                options: [
+                    { text: "誰かと笑って、気持ちを軽くする", type: "rosy" },
+                    { text: "静かにひとりで、心を整える", type: "gigi" },
+                    { text: "前を向いて自分を励ます", type: "bonbon" }
+                ]
+            },
+            {
+                q: "自分のがんばり方について、いちばん近いのは？",
+                options: [
+                    { text: "目立たなくてもいい。コツコツ積み重ねる", type: "bonbon" },
+                    { text: "ここぞの時に集中して、ぐっと力を出す", type: "levy" },
+                    { text: "「ありがとう」があると、もっとがんばれちゃう", type: "lillilu" }
+                ]
+            },
+            {
+                q: "休日の朝はどう始めるのが理想的？",
+                options: [
+                    { text: "お気に入りのコーヒーや紅茶でホッと一息", type: "levy" },
+                    { text: "毛布にくるまって、ぬくぬく", type: "espie" },
+                    { text: "おでかけの準備！Let’s go！", type: "lillilu" }
+                ]
+            },
+            {
+                q: "冒険にでるなら？",
+                options: [
+                    { text: "まずはルートを考えて、しっかり計画づくり", type: "levy" },
+                    { text: "思い立ったら、すぐ飛び出す！", type: "finn" },
+                    { text: "準備して、体調も整える", type: "espie" }
+                ]
+            },
+            {
+                q: "みんなでいるときのあなたは？",
+                options: [
+                    { text: "みんなが話しやすくなる雰囲気づくり", type: "finn" },
+                    { text: "少人数で、ゆっくりひとりひとりの話を聞く", type: "espie" },
+                    { text: "全体を見ながら、そっとフォローにまわる", type: "gigi" }
+                ]
+            },
+            {
+                q: "迷子を見つけたら？",
+                options: [
+                    { text: "「大丈夫だよ」って隣で一緒にいてあげる", type: "lillilu" },
+                    { text: "まずは一緒に探してみる！", type: "bonbon" },
+                    { text: "少し離れた場所から、そっと見守る", type: "gigi" }
+                ]
+            },
+            {
+                q: "サプライズでプレゼント！何をあげる？",
+                options: [
+                    { text: "自分が好きなものを「一緒に楽しんでほしい」", type: "finn" },
+                    { text: "気持ちをこめた手作りのもの", type: "bonbon" },
+                    { text: "その人がずっと欲しがってたものを選ぶ", type: "rosy" }
+                ]
+            },
+            {
+                q: "乗り物は何がすき？",
+                options: [
+                    { text: "ジェットコースター！ スリルを楽しみたい", type: "gigi" },
+                    { text: "メリーゴーランド♪ ゆっくり笑顔でぐるぐる", type: "rosy" },
+                    { text: "観覧車　きらめく景色をながめる時間が好き", type: "levy" }
+                ]
+            },
+            {
+                q: "今日は1日楽しかった！どんな気分？",
+                options: [
+                    { text: "もう、次のワクワクが楽しみ", type: "finn" },
+                    { text: "写真を見て、余韻にひたる", type: "gigi" },
+                    { text: "終わっちゃった～。ちょっぴり切ない", type: "lillilu" }
+                ]
+            }
+        ];
+
+        // 状態管理
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let scores = {};
+
+        // 配列をシャッフルする関数
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // 診断スタート
+        function startQuiz() {
+            // スコア初期化
+            Object.keys(characters).forEach(key => scores[key] = 0);
+            
+            // 12問から7問をランダムに選出 (超・高精度ルート分岐システムのシミュレーション)
+            // 毎回違う質問構成にすることで精度感を演出
+            const shuffledPool = shuffle([...questionPool]);
+            currentQuestions = shuffledPool.slice(0, 7);
+            
+            currentIndex = 0;
+            
+            // 画面切り替え
+            showScreen('quiz-screen');
+            loadQuestion();
+        }
+
+        // 画面表示切り替え関数
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        // 質問読み込み
+        function loadQuestion() {
+            const q = currentQuestions[currentIndex];
+            document.getElementById('question-text').innerText = `Q${currentIndex + 1}. ${q.q}`;
+            document.getElementById('current-q-num').innerText = currentIndex + 1;
+            
+            // 質問画像をリセット（画像を質問ごとに変えたい場合はここでsrcを設定）
+            const qImg = document.getElementById('question-image');
+            qImg.style.display = 'block'; // プレースホルダーのテキストを隠すため
+            qImg.parentElement.querySelector('img').style.display = 'none'; // エラーハンドラが走った場合のため
+            qImg.src = `question_${currentIndex+1}.png`; // 仮の画像パス
+
+            const answersArea = document.getElementById('answers-area');
+            answersArea.innerHTML = '';
+
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'btn';
+                btn.innerText = opt.text;
+                btn.onclick = () => answer(opt.type);
+                answersArea.appendChild(btn);
+            });
+        }
+
+        // 回答処理
+        function answer(type) {
+            if (scores[type] !== undefined) {
+                scores[type]++;
+            }
+            
+            currentIndex++;
+            if (currentIndex < currentQuestions.length) {
+                loadQuestion();
+            } else {
+                showLoading();
+            }
+        }
+
+        // 分析画面表示
+        function showLoading() {
+            showScreen('loading-screen');
+            setTimeout(showResult, 2500); // 2.5秒後に結果表示
+        }
+
+        // 結果表示処理
+        function showResult() {
+            // 最高得点のキャラを特定
+            let maxScore = -1;
+            let resultCharKey = '';
+            
+            // 同点の場合はランダム、あるいは定義順で最初のもの
+            Object.keys(scores).forEach(key => {
+                if (scores[key] > maxScore) {
+                    maxScore = scores[key];
+                    resultCharKey = key;
+                }
+            });
+
+            const char = characters[resultCharKey];
+
+            // データの埋め込み
+            document.getElementById('result-image').src = `${char.id}.png`;
+            document.getElementById('result-image').style.display = 'block'; // エラーハンドラリセット用
+            document.getElementById('result-catchphrase').innerText = char.catchphrase.split('\n')[0]; // 改行があれば最初の行など
+            document.getElementById('result-name').innerText = char.name;
+            document.getElementById('result-charm-text').innerText = char.charm;
+            document.getElementById('result-desc').innerText = char.desc;
+            document.getElementById('result-advice').innerText = char.advice;
+
+            // ステキなところリスト生成
+            const pointsList = document.getElementById('result-points');
+            pointsList.innerHTML = '';
+            char.points.forEach(p => {
+                const li = document.createElement('li');
+                li.innerText = p;
+                pointsList.appendChild(li);
+            });
+
+            // 円グラフ生成 (conic-gradient)
+            // スコアに基づいて比率を出すが、結果キャラを目立たせる（光らせる）
+            // 全体の合計点を計算
+            let totalScore = 0;
+            Object.keys(scores).forEach(k => totalScore += scores[k]);
+            
+            // 7色の順序定義
+            const colorOrder = ['lillilu', 'rosy', 'finn', 'bonbon', 'espie', 'levy', 'gigi'];
+            
+            let gradientStr = '';
+            let currentDeg = 0;
+
+            // もし全問正解などで他が0点の場合、グラフが1色になるのを防ぐため、最低値を1として計算し直す（見た目のため）
+            // 今回はシンプルに実際のスコア比率で描画し、勝者を少し大きく見せる等の工夫はCSSのシャドウで行う
+            
+            // スコアが0の場合でも少し色が見えるように補正（Base: 1点）
+            let adjustedTotal = 0;
+            const adjustedScores = {};
+            colorOrder.forEach(key => {
+                let val = scores[key] || 0;
+                if(key === resultCharKey) val += 2; // 勝者を強調するためにボーナス加算
+                val += 1; // 0点回避
+                adjustedScores[key] = val;
+                adjustedTotal += val;
+            });
+
+            colorOrder.forEach((key, index) => {
+                const ratio = adjustedScores[key] / adjustedTotal;
+                const deg = ratio * 360;
+                const color = characters[key].color;
+                
+                gradientStr += `${color} ${currentDeg}deg ${currentDeg + deg}deg`;
+                if (index < colorOrder.length - 1) gradientStr += ', ';
+                
+                currentDeg += deg;
+            });
+
+            const chartPie = document.getElementById('chart-pie');
+            chartPie.style.background = `conic-gradient(${gradientStr})`;
+            
+            // 勝者の色で光らせる
+            chartPie.style.boxShadow = `0 0 20px 5px ${char.color}`;
+
+            // シェアボタンのリンク生成
+            const shareText = encodeURIComponent(`私の隠れた魅力は...「${char.charm}」でした！\nキャラタイプ：${char.name}\n\n#リルリルと仲間たちキャラクター診断`);
+            const shareUrl = encodeURIComponent(window.location.href);
+
+            document.getElementById('share-line').href = `https://social-plugins.line.me/lineit/share?url=${shareUrl}&text=${shareText}`;
+            // Instagramは直接シェアURLがないため、アプリを開くなどの挙動になりますが、ここでは一般的なURLとしておきます
+            document.getElementById('share-insta').href = `https://www.instagram.com/`; 
+            document.getElementById('share-threads').href = `https://www.threads.net/intent/post?text=${shareText}&url=${shareUrl}`;
+
+            showScreen('result-screen');
+        }
+    </script>
+</body>
+</html>
