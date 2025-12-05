@@ -3,681 +3,542 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>あなたの隠れた魅力はなんだ！？ ～リルリルと仲間たちキャラクター診断～</title>
+    <title>リルリルと仲間たち診断 ～あなたの隠れた魅力はなんだ！？～</title>
     
-    <!-- Google Fonts: 手書き風で可愛い「Zen Maru Gothic」を使用 -->
+    <!-- React & ReactDOM (Stable) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel (Stable) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Zen Maru Gothic -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
 
     <style>
-        :root {
-            /* パステルカラー定義 */
-            --color-lillilu: #ffb3ba; /* パステル赤 */
-            --color-rosy: #ffdfba;    /* パステルピンク（少しオレンジ寄りにして区別）あるいは薄ピンク */
-            --color-rosy-real: #ffccdd; /* よりピンクらしく */
-            --color-finn: #baffc9;    /* パステルグリーン */
-            --color-bonbon: #ffdfba;  /* パステルオレンジ */
-            --color-espie: #bae1ff;   /* パステルスカイブルー */
-            --color-levy: #e2baff;    /* パステルパープル */
-            --color-gigi: #ffffba;    /* パステルイエロー（指定がないため追加） */
-            
-            --text-main: #5a5a5a;     /* 真っ黒を使わず、濃いグレー */
-            --text-sub: #7a7a7a;
-            --bg-dot: #f0f8ff;
-        }
-
         body {
             font-family: 'Zen Maru Gothic', sans-serif;
-            color: var(--text-main);
             margin: 0;
             padding: 0;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            /* 手書き風水玉背景（CSSで再現） */
-            background-color: #fffbf0;
-            background-image: 
-                radial-gradient(circle, #ffe4e1 15%, transparent 16%),
-                radial-gradient(circle, #e0ffff 15%, transparent 16%);
-            background-size: 60px 60px;
-            background-position: 0 0, 30px 30px;
             overflow-x: hidden;
+            background-color: #fffaf0; /* Creamy base */
+            color: #5d4037; /* Cocoa Brown */
         }
 
-        .container {
-            width: 90%;
-            max-width: 600px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            padding: 40px 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            text-align: center;
-            position: relative;
-            min-height: 500px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+        /* Animated Polka Dot Background */
+        .bg-polka {
+            background-color: #fffaf0;
+            background-image: 
+                radial-gradient(#ffcad4 20%, transparent 20%),
+                radial-gradient(#b0e0e6 20%, transparent 20%);
+            background-size: 80px 80px;
+            background-position: 0 0, 40px 40px;
+            animation: bgScroll 60s linear infinite;
         }
 
-        h1 {
-            font-size: 1.5rem;
-            color: #ff8fab;
-            margin-bottom: 30px;
-            line-height: 1.6;
+        @keyframes bgScroll {
+            0% { background-position: 0 0, 40px 40px; }
+            100% { background-position: 80px 80px, 120px 120px; }
         }
 
-        h2 {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            color: var(--text-main);
+        .card-shadow {
+            box-shadow: 8px 8px 0px 0px rgba(186, 168, 150, 0.4);
+            border: 4px solid #fff;
         }
 
-        /* 画像プレースホルダー */
-        .img-placeholder {
-            width: 100%;
-            max-width: 300px;
-            aspect-ratio: 1 / 1; /* 正方形 */
-            background-color: #f0f0f0;
-            border: 2px dashed #ccc;
-            border-radius: 15px;
-            margin: 0 auto 20px auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            color: #aaa;
+        .btn-push {
+            transition: all 0.1s;
+            box-shadow: 0px 6px 0px 0px rgba(93, 64, 55, 0.15);
         }
-        
-        .img-placeholder img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .btn-push:active {
+            transform: translateY(6px);
+            box-shadow: 0px 0px 0px 0px rgba(93, 64, 55, 0.15);
         }
 
-        /* ボタンデザイン */
-        .btn {
-            display: block;
-            width: 100%;
-            max-width: 400px;
-            margin: 15px auto;
-            padding: 15px;
-            border: 2px solid #ffd1dc;
-            background-color: #fff;
-            color: var(--text-main);
-            border-radius: 30px;
-            font-size: 1rem;
-            font-family: 'Zen Maru Gothic', sans-serif;
+        /* Pie Chart Styles */
+        .pie-slice {
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 0 #ffd1dc;
+            transition: opacity 0.2s, transform 0.2s;
+            transform-origin: center;
+        }
+        .pie-slice:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+        .pie-slice.selected {
+            transform: scale(1.05);
+            z-index: 10;
+            filter: drop-shadow(0 0 8px rgba(0,0,0,0.15));
+        }
+        .pie-text {
+            font-size: 0.14px;
+            fill: #5d4037;
+            font-weight: 900;
+            pointer-events: none;
+            text-anchor: middle;
+            dominant-baseline: middle;
+            paint-order: stroke;
+            stroke: #ffffff;
+            stroke-width: 0.02px;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
-        .btn:hover {
-            background-color: #fff0f5;
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 #ffd1dc;
+        /* Loading Animation */
+        .loading-text:after {
+            content: ' .';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+        @keyframes dots {
+            0%, 20% { color: rgba(0,0,0,0); text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0);}
+            40% { color: #ff8fa3; text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0);}
+            60% { text-shadow: .25em 0 0 #ff8fa3, .5em 0 0 rgba(0,0,0,0);}
+            80%, 100% { text-shadow: .25em 0 0 #ff8fa3, .5em 0 0 #ff8fa3;}
         }
 
-        .btn:active {
-            transform: translateY(4px);
-            box-shadow: none;
-        }
-
-        /* 画面切り替え用 */
-        .screen {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* 結果画面のデザイン */
-        .result-header {
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin: 10px 0;
-            color: var(--text-main);
-        }
-        
-        .result-type {
-            font-size: 1.1rem;
-            color: #ff8fab;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        .result-charm {
-            background-color: #fdf5e6;
-            padding: 15px;
-            border-radius: 15px;
-            margin: 20px 0;
-            border: 2px dotted #ffcc99;
-        }
-
-        .result-charm h3 {
-            font-size: 1rem;
-            color: #ff9966;
-            margin-top: 0;
-        }
-
-        .advice-box {
-            text-align: left;
-            margin: 20px 0;
-            line-height: 1.8;
-            font-size: 0.95rem;
-        }
-
-        .nice-points {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin: 20px 0;
-        }
-
-        .nice-points li {
-            background: #e6e6fa;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            color: #6a5acd;
-        }
-
-        /* 円グラフ */
-        .chart-container {
-            width: 200px;
-            height: 200px;
-            margin: 30px auto;
-            position: relative;
-            border-radius: 50%;
-            /* conic-gradientはJSで動的に設定します */
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-        }
-        
-        .chart-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60%;
-            height: 60%;
-            background: rgba(255,255,255,0.9);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 0.8rem;
-            color: var(--text-sub);
-        }
-
-        /* シェアボタン群 */
-        .share-area {
-            margin-top: 30px;
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-        
-        .share-btn {
-            border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            font-size: 0.9rem;
-        }
-        .share-line { background-color: #06c755; }
-        .share-insta { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
-        .share-threads { background-color: #000; } /* Threadsは黒 */
-
-        /* 分析中画面 */
-        .loading-text {
-            font-size: 1.5rem;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
-        }
-
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #fdf5e6; }
+        ::-webkit-scrollbar-thumb { background: #ffcad4; border-radius: 4px; }
     </style>
 </head>
 <body>
+    <div id="root"></div>
 
-    <div class="container">
-        
-        <!-- スタート画面 -->
-        <div id="start-screen" class="screen active">
-            <h1>あなたの隠れた魅力はなんだ！？<br>～リルリルと仲間たちキャラクター診断～</h1>
-            <div class="img-placeholder">
-                <img src="top_image.png" alt="トップ画像" onerror="this.style.display='none'; this.parentElement.innerText='画像エリア(正方形)'">
-            </div>
-            <p>12の質問から、あなたにぴったりの7問を厳選！<br>超・高精度ルート分岐システムで診断します。</p>
-            <button class="btn" onclick="startQuiz()">診断スタート！</button>
-        </div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
 
-        <!-- 質問画面 -->
-        <div id="quiz-screen" class="screen">
-            <div class="img-placeholder">
-                <!-- ここに質問ごとの画像を挿入可能 -->
-                <img id="question-image" src="" alt="質問画像" onerror="this.style.display='none'; this.parentElement.innerText='画像エリア(正方形/4:5)'">
-            </div>
-            <h2 id="question-text">質問文がここに入ります</h2>
-            <div id="answers-area">
-                <!-- ボタンがJSで生成されます -->
-            </div>
-            <p style="margin-top:20px; font-size:0.8rem; color:#aaa;">Q. <span id="current-q-num">1</span> / 7</p>
-        </div>
+        // --- Data Definitions ---
 
-        <!-- 分析中画面 -->
-        <div id="loading-screen" class="screen">
-            <div class="loading-text">分析中...</div>
-            <p>あなたの心の形を計算しています</p>
-        </div>
-
-        <!-- 結果画面 -->
-        <div id="result-screen" class="screen">
-            <div class="img-placeholder">
-                <img id="result-image" src="" alt="キャラクター画像" onerror="this.style.display='none'; this.parentElement.innerText='キャラ画像エリア(正方形)'">
-            </div>
-            
-            <div class="result-type" id="result-catchphrase">キャッチコピー</div>
-            <div class="result-header" id="result-name">Name</div>
-            
-            <div class="result-charm">
-                <h3>[ 隠れた魅力 ]</h3>
-                <div id="result-charm-text">魅力テキスト</div>
-                <p id="result-desc" style="margin-top:10px; font-size:0.9rem;">説明文</p>
-            </div>
-
-            <div class="advice-box">
-                <strong>【アドバイス】</strong><br>
-                <span id="result-advice">アドバイス本文</span>
-            </div>
-
-            <div style="text-align: left;">
-                <strong>【ステキなところ】</strong>
-                <ul class="nice-points" id="result-points">
-                    <li>AAA</li>
-                    <li>BBB</li>
-                    <li>CCC</li>
-                </ul>
-            </div>
-
-            <div class="chart-container" id="chart-pie">
-                <div class="chart-center">あなたの<br>カラー</div>
-            </div>
-
-            <button class="btn" onclick="location.reload()">もう一度診断する</button>
-            
-            <div class="share-area">
-                <a href="#" id="share-line" class="share-btn share-line" target="_blank">LINE</a>
-                <a href="#" id="share-threads" class="share-btn share-threads" target="_blank">Threads</a>
-                <a href="#" id="share-insta" class="share-btn share-insta" target="_blank">Instagram</a>
-            </div>
-        </div>
-
-    </div>
-
-    <script>
-        // キャラクターデータ定義
-        const characters = {
+        const CHARACTERS = {
             lillilu: {
-                id: 'lillilu',
-                name: 'LilLilu（リルリル）',
-                color: '#ffb3ba', // パステル赤
-                catchphrase: '🤡 雨上がりの太陽タイプ',
-                charm: '無邪気な愛され力',
-                desc: 'あなたはそこにいるだけで周りを明るくする太陽のような存在！ちょっとしたユーモアで、みんなの心をフワッと軽くしているよ。',
-                advice: 'まわりの人がホッコリとするような雰囲気をもっているみたい。優しい子心で自分の気持ちよりも、つい相手の気持ちを優先しがち。すこし疲れた日は、誰かのためだけじゃなくて、自分のためにも「やさしくしてあげる時間」をつくってあげてね。',
-                points: ['愛嬌', '親しみやすい', '朗らか']
+                id: 'lillilu', name: 'LilLilu', jpName: 'リルリル', icon: '🤡', color: '#ffadad', strokeColor: '#ef5350', // Pastel Red
+                type: '雨上がりの太陽タイプ', charm: '無邪気な愛され力',
+                desc: 'あなたはそこにいるだけで周りを明るくする太陽のような存在！\nちょっとしたユーモアで、みんなの心をフワッと軽くしているよ。',
+                advice: 'まわりの人がホッコリとするような雰囲気をもっているみたい。\n優しい子心で自分の気持ちよりも、つい相手の気持ちを優先しがち。\nすこし疲れた日は、誰かのためだけじゃなくて、\n自分のためにも「やさしくしてあげる時間」をつくってあげてね。',
+                points: ['愛嬌', '親しみやすい', '朗らか'], image: 'lillilu.png'
             },
             rosy: {
-                id: 'rosy',
-                name: 'Rosy（ロージー）',
-                color: '#ffccdd', // パステルピンク
-                catchphrase: '🐰 春のそよ風タイプ',
-                charm: '天真爛漫なハッピーオーラ',
-                desc: '喜びをシェアする天才！素敵なものを見つけたら一番に誰かに伝えるその純粋さが、みんなの日常をカラフルにしているよ。',
-                advice: '季節の変化や、身近な“ときめき”を見つけるのが上手なあなた。うれしかったことを誰かとシェアしたくなるのもロージーっぽいところ。ひとりで抱え込まずに、うれしかったことも、ちょっぴりさみしかったことも、信頼できる人におすそ分けしてみると、もっと心が軽くなりそう。',
-                points: ['感性豊か', '天真爛漫', '天然']
+                id: 'rosy', name: 'Rosy', jpName: 'ロージー', icon: '🐰', color: '#ffc6ff', strokeColor: '#ec407a', // Pastel Pink
+                type: '春のそよ風タイプ', charm: '天真爛漫なハッピーオーラ',
+                desc: '喜びをシェアする天才！\n素敵なものを見つけたら一番に誰かに伝えるその純粋さが、みんなの日常をカラフルにしているよ。',
+                advice: '季節の変化や、身近な“ときめき”を見つけるのが上手なあなた。\nうれしかったことを誰かとシェアしたくなるのもロージーっぽいところ。\nひとりで抱え込まずに、うれしかったことも、\nちょっぴりさみしかったことも、\n信頼できる人におすそ分けしてみると、\nもっと心が軽くなりそう。',
+                points: ['感性豊か', '天真爛漫', '天然'], image: 'rosy.png'
             },
             finn: {
-                id: 'finn',
-                name: 'Finn（フィン）',
-                color: '#baffc9', // パステルグリーン
-                catchphrase: '🐸 夏の波しぶきタイプ',
-                charm: 'はじける開放感',
-                desc: 'あなたは心の壁を取り払う天才！「ようこそ！」というあなたの明るい一言が、みんなの心のドアを開けているよ。',
-                advice: '本当はちょっぴりドキドキしやすいのに、いざというときは笑顔で場をつなげるフィン気質のあなた。うまく話そうとしなくても大丈夫。「きいてみたい」と思ったことを素直にきいてみるだけで、十分にステキなコミュニケーションになっているよ。',
-                points: ['ムードメーカー', '好奇心', '冒険家']
+                id: 'finn', name: 'Finn', jpName: 'フィン', icon: '🐸', color: '#b0f2c2', strokeColor: '#66bb6a', // Pastel Green
+                type: '夏の波しぶきタイプ', charm: 'はじける開放感',
+                desc: 'あなたは心の壁を取り払う天才！\n「ようこそ！」というあなたの明るい一言が、みんなの心のドアを開けているよ。',
+                advice: '本当はちょっぴりドキドキしやすいのに、\nいざというときは笑顔で場をつなげるフィン気質のあなた。\nうまく話そうとしなくても大丈夫。\n「きいてみたい」と思ったことを素直にきいてみるだけで、\n十分にステキなコミュニケーションになっているよ。',
+                points: ['ムードメーカー', '好奇心', '冒険家'], image: 'finn.png'
             },
             bonbon: {
-                id: 'bonbon',
-                name: 'Bonbon（ボンボン）',
-                color: '#ffdfba', // パステルオレンジ
-                catchphrase: '🐻 秋の夕焼けタイプ',
-                charm: 'ひたむきな信頼感',
+                id: 'bonbon', name: 'Bonbon', jpName: 'ボンボン', icon: '🐻', color: '#ffd6a5', strokeColor: '#ffa726', // Pastel Orange
+                type: '秋の夕焼けタイプ', charm: 'ひたむきな信頼感',
                 desc: 'あなたは言葉より行動で示す人。コツコツ頑張るその背中に、みんなは「自分も頑張ろう！」と勇気をもらっているよ。',
-                advice: '自分なりのペースで、目の前のことに一生懸命になれるタイプ。結果よりもプロセスをだいじにできるのがあなたらしさ。ときどき立ち止まって、『ここまで来た自分、よくやってる！』と、ちいさなガッツポーズをしてあげてね。',
-                points: ['努力家', '誠実', 'マイペース']
+                advice: '自分なりのペースで、目の前のことに一生懸命になれるタイプ。\n結果よりもプロセスをだいじにできるのがあなたらしさ。\nときどき立ち止まって、\n『ここまで来た自分、よくやってる！』と、\nちいさなガッツポーズをしてあげてね。',
+                points: ['努力家', '誠実', 'マイペース'], image: 'bonbon.png',
+                charmShort: 'ひたむきさと前向きさ' // For list view
             },
             espie: {
-                id: 'espie',
-                name: 'Espie（エスピー）',
-                color: '#bae1ff', // パステルスカイブルー
-                catchphrase: '🐘 冬の毛布タイプ',
-                charm: '深くて温かい包容力',
+                id: 'espie', name: 'Espie', jpName: 'エスピー', icon: '🐘', color: '#a0c4ff', strokeColor: '#42a5f5', // Pastel Sky Blue
+                type: '冬の毛布タイプ', charm: '深くて温かい包容力',
                 desc: '言葉にならない声を聞くやさしさの持ち主。アドバイスより、ただ静かに寄り添ってくれるその温もりに、多くの人が救われているよ。',
-                advice: 'あなたは、困っている人や不安そうな人を見つけると、そっと寄り添いたくなるエスピー気質。支える側に回ることが多いからこそ、自分の不安や疲れを後回しにしてしまう一面も。休みの日は、毛布をかぶって、ゆっくり休んでね。',
-                points: ['包容力', '共感力', 'あったかい']
+                advice: 'あなたは、困っている人や不安そうな人を見つけると、\nそっと寄り添いたくなるエスピー気質。\n支える側に回ることが多いからこそ、\n自分の不安や疲れを後回しにしてしまう一面も。\n休みの日は、毛布をかぶって、ゆっくり休んでね。',
+                points: ['包容力', '共感力', 'あったかい'], image: 'espie.png'
             },
             gigi: {
-                id: 'gigi',
-                name: 'Gigi（ジジ）',
-                color: '#ffffba', // パステルイエロー (結果色用)
-                catchphrase: '🦒 夜明けの朝日タイプ',
-                charm: 'おだやかな見守り力',
+                id: 'gigi', name: 'Gigi', jpName: 'ジジ', icon: '🦒', color: '#ffffb6', strokeColor: '#fdd835', // Pastel Yellow
+                type: '夜明けの朝日タイプ', charm: 'おだやかな見守り力',
                 desc: '一歩引いて全体を見る安心感の持ち主。みんなが気づかない小さな変化にも気づく賢さと優しさに支えられている人がいるよ。',
-                advice: 'あなたは、感情に流され過ぎず、少し高いところから全体を見守るような視点を持っている人。だからこそ、『自分の気持ち』を後回しにしがちな一面も。ときどきは、自分の本音を吐き出す時間を作ってみてね。ジジみたいに、ストレス発散に、ジェットコースターに乗るのもひとつの手。',
-                points: ['俯瞰', '冷静さ', '見守り']
+                advice: 'あなたは、感情に流され過ぎず、少し高いところから\n全体を見守るような視点を持っている人。\nだからこそ、『自分の気持ち』を後回しにしがちな一面も。\nときどきは、自分の本音を吐き出す時間を作ってみてね。\nジジみたいに、ストレス発散に、ジェットコースターに乗るのもひとつの手。',
+                points: ['俯瞰', '冷静さ', '見守り'], image: 'gigi.png'
             },
             levy: {
-                id: 'levy',
-                name: 'Levy（レヴィ）',
-                color: '#e2baff', // パステルパープル
-                catchphrase: '🦄 夜空の星タイプ',
-                charm: '静かなる癒やしの光',
+                id: 'levy', name: 'Levy', jpName: 'レヴィ', icon: '🦄', color: '#e7c6ff', strokeColor: '#ab47bc', // Pastel Purple
+                type: '夜空の星タイプ', charm: '静かなる癒やしの光',
                 desc: '暗闇でこそ輝く希望の星。落ち込んでいる時にあなたがかけてくれる優しい言葉は、迷っている人の道しるべになっているよ。',
-                advice: 'にぎやかな場よりも、少人数や落ち着いた時間のなかで、自分らしさが光るタイプ。じっくり考えたり、ひとりの世界にひたる時間も大切な栄養。『今日はどんな小さな光があったかな？』と、寝る前にひとつだけ思い出してみると、レヴィらしい穏やかな時間が育っていきそう。',
-                points: ['ミステリアス', '静かな情熱', '直感']
+                advice: 'にぎやかな場よりも、少人数や落ち着いた時間のなかで、\n自分らしさが光るタイプ。\nじっくり考えたり、ひとりの世界にひたる時間も大切な栄養。\n『今日はどんな小さな光があったかな？』と、\n寝る前にひとつだけ思い出してみると、\nレヴィらしい穏やかな時間が育っていきそう。',
+                points: ['ミステリアス', '静かな情熱', '直感'], image: 'levy.png'
             }
         };
 
-        // 全12問の質問データ (A, B, C の選択肢に対応するキャラIDを設定)
-        const questionPool = [
-            {
-                q: "友だちが落ち込んでいたら？",
-                options: [
-                    { text: "そっと寄り添って、ゆっくり話を聞く", type: "espie" },
-                    { text: "気分転換に誘って、一緒に楽しむ", type: "rosy" },
-                    { text: "いいところを伝えて、励ます", type: "bonbon" }
-                ]
-            },
-            {
-                q: "大切な人の成功を聞いたら？",
-                options: [
-                    { text: "自分のことみたいに喜んじゃう！", type: "rosy" },
-                    { text: "「よくがんばったね」って気持ちを受け止める", type: "espie" },
-                    { text: "次はどんな目標か楽しみになる", type: "levy" }
-                ]
-            },
-            {
-                q: "気持ちがちょっとすれ違っちゃった…",
-                options: [
-                    { text: "まずは「どうしたの？」って聞いてみる", type: "finn" },
-                    { text: "自分の気持ちを、そっと打ち明ける", type: "lillilu" },
-                    { text: "少し時間をおいて、相手のタイミングを待つ", type: "gigi" }
-                ]
-            },
-            {
-                q: "自分がしんどい時のお守りは？",
-                options: [
-                    { text: "誰かと笑って、気持ちを軽くする", type: "rosy" },
-                    { text: "静かにひとりで、心を整える", type: "gigi" },
-                    { text: "前を向いて自分を励ます", type: "bonbon" }
-                ]
-            },
-            {
-                q: "自分のがんばり方について、いちばん近いのは？",
-                options: [
-                    { text: "目立たなくてもいい。コツコツ積み重ねる", type: "bonbon" },
-                    { text: "ここぞの時に集中して、ぐっと力を出す", type: "levy" },
-                    { text: "「ありがとう」があると、もっとがんばれちゃう", type: "lillilu" }
-                ]
-            },
-            {
-                q: "休日の朝はどう始めるのが理想的？",
-                options: [
-                    { text: "お気に入りのコーヒーや紅茶でホッと一息", type: "levy" },
-                    { text: "毛布にくるまって、ぬくぬく", type: "espie" },
-                    { text: "おでかけの準備！Let’s go！", type: "lillilu" }
-                ]
-            },
-            {
-                q: "冒険にでるなら？",
-                options: [
-                    { text: "まずはルートを考えて、しっかり計画づくり", type: "levy" },
-                    { text: "思い立ったら、すぐ飛び出す！", type: "finn" },
-                    { text: "準備して、体調も整える", type: "espie" }
-                ]
-            },
-            {
-                q: "みんなでいるときのあなたは？",
-                options: [
-                    { text: "みんなが話しやすくなる雰囲気づくり", type: "finn" },
-                    { text: "少人数で、ゆっくりひとりひとりの話を聞く", type: "espie" },
-                    { text: "全体を見ながら、そっとフォローにまわる", type: "gigi" }
-                ]
-            },
-            {
-                q: "迷子を見つけたら？",
-                options: [
-                    { text: "「大丈夫だよ」って隣で一緒にいてあげる", type: "lillilu" },
-                    { text: "まずは一緒に探してみる！", type: "bonbon" },
-                    { text: "少し離れた場所から、そっと見守る", type: "gigi" }
-                ]
-            },
-            {
-                q: "サプライズでプレゼント！何をあげる？",
-                options: [
-                    { text: "自分が好きなものを「一緒に楽しんでほしい」", type: "finn" },
-                    { text: "気持ちをこめた手作りのもの", type: "bonbon" },
-                    { text: "その人がずっと欲しがってたものを選ぶ", type: "rosy" }
-                ]
-            },
-            {
-                q: "乗り物は何がすき？",
-                options: [
-                    { text: "ジェットコースター！ スリルを楽しみたい", type: "gigi" },
-                    { text: "メリーゴーランド♪ ゆっくり笑顔でぐるぐる", type: "rosy" },
-                    { text: "観覧車　きらめく景色をながめる時間が好き", type: "levy" }
-                ]
-            },
-            {
-                q: "今日は1日楽しかった！どんな気分？",
-                options: [
-                    { text: "もう、次のワクワクが楽しみ", type: "finn" },
-                    { text: "写真を見て、余韻にひたる", type: "gigi" },
-                    { text: "終わっちゃった～。ちょっぴり切ない", type: "lillilu" }
-                ]
-            }
+        const QUESTIONS_POOL = [
+            { id: 1, q: "大切な人が落ち込んでいたら？", options: [{ text: "そっと寄り添って、\nゆっくり話を聞く", point: "espie" }, { text: "気分転換に誘って、\n一緒に楽しむ", point: "rosy" }, { text: "いいところを伝えて、\n励ます", point: "bonbon" }] },
+            { id: 2, q: "大切な人の成功を聞いたら？", options: [{ text: "自分のことみたいに\n喜んじゃう！", point: "rosy" }, { text: "「よくがんばったね」って\n気持ちを受け止める", point: "espie" }, { text: "次はどんな目標か\n楽しみになる", point: "levy" }] },
+            { id: 3, q: "気持ちがちょっと\nすれ違っちゃった…", options: [{ text: "まずは「どうしたの？」って\n聞いてみる", point: "finn" }, { text: "自分の気持ちを、\nそっと打ち明ける", point: "lillilu" }, { text: "少し時間をおいて、\n相手のタイミングを待つ", point: "gigi" }] },
+            { id: 4, q: "自分がしんどいときは？", options: [{ text: "誰かと笑って、\n気持ちを軽くする", point: "rosy" }, { text: "静かにひとりで、\n心を整える", point: "gigi" }, { text: "前を向いて\n自分を励ます", point: "bonbon" }] },
+            { id: 5, q: "自分のがんばり方。\nいちばん近いのは？", options: [{ text: "目立たなくてもいい。\nコツコツ積み重ねる", point: "bonbon" }, { text: "ここぞの時に集中して、\nぐっと力を出す", point: "levy" }, { text: "「ありがとう」があると、\nもっとがんばれちゃう", point: "lillilu" }] },
+            { id: 6, q: "おやすみ日の朝。\nどうはじめるのが理想的？", options: [{ text: "お気に入りのコーヒーや\n紅茶でホッと一息", point: "levy" }, { text: "毛布にくるまって、\nぬくぬく", point: "espie" }, { text: "おでかけの準備！\nLet’s go！", point: "lillilu" }] },
+            { id: 7, q: "冒険にでるなら？", options: [{ text: "まずはルートを考えて、\nしっかり計画づくり", point: "levy" }, { text: "思い立ったら、\nすぐ飛び出す！", point: "finn" }, { text: "準備して、\n体調も整える", point: "espie" }] },
+            { id: 8, q: "みんなでいるときは\nどうしてる？", options: [{ text: "みんなが話しやすくなる\n雰囲気づくり", point: "finn" }, { text: "少人数で、ゆっくり\nひとりひとりの話を聞く", point: "espie" }, { text: "全体を見ながら、\nそっとフォローにまわる", point: "gigi" }] },
+            { id: 9, q: "迷子を見つけたら？", options: [{ text: "「大丈夫だよ」って\n隣で一緒にいてあげる", point: "lillilu" }, { text: "まずは一緒に\n探してみる！", point: "bonbon" }, { text: "少し離れた場所から、\nそっと見守る", point: "gigi" }] },
+            { id: 10, q: "サプライズでプレゼント！\n何をあげたい？", options: [{ text: "自分が好きなものを\n「一緒に楽しんでほしい」", point: "finn" }, { text: "気持ちをこめた\n手作りのもの", point: "bonbon" }, { text: "その人がずっと\n欲しがってたもの", point: "rosy" }] },
+            { id: 11, q: "遊園地にきたよ。何が好き？", options: [{ text: "ジェットコースター！\nスリルを楽しみたい", point: "gigi" }, { text: "メリーゴーランド♪\nゆっくり笑顔でぐるぐる", point: "rosy" }, { text: "観覧車\nきらめく景色をながめる時間が好き", point: "levy" }] },
+            { id: 12, q: "今日は1日楽しかった！\nどんな気分？", options: [{ text: "もう、次の\nワクワクが楽しみ", point: "finn" }, { text: "写真を見て、\n余韻にひたる", point: "gigi" }, { text: "終わっちゃった～。\nちょっぴり切ない", point: "lillilu" }] }
         ];
 
-        // 状態管理
-        let currentQuestions = [];
-        let currentIndex = 0;
-        let scores = {};
+        // --- Helper Components ---
 
-        // 配列をシャッフルする関数
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
+        const SafeImage = ({ src, alt, className, style, fallbackColor = "bg-orange-50" }) => {
+            const [hasError, setHasError] = useState(false);
+            if (hasError) {
+                return (
+                    <div className={`w-full h-full ${fallbackColor} flex flex-col items-center justify-center border-4 border-dashed border-orange-200 text-orange-300 p-4`}>
+                        <span className="text-4xl mb-2">🖼️</span>
+                        <span className="text-xs font-bold text-center break-all">{alt}</span>
+                        <span className="text-[10px] mt-1 font-bold">画像準備中</span>
+                    </div>
+                );
             }
-            return array;
-        }
+            return <img src={src} alt={alt} className={className} style={style} onError={() => setHasError(true)} />;
+        };
 
-        // 診断スタート
-        function startQuiz() {
-            // スコア初期化
-            Object.keys(characters).forEach(key => scores[key] = 0);
+        const CustomPieChart = ({ data, winnerKey }) => {
+            const [selectedId, setSelectedId] = useState(winnerKey);
+            const total = data.reduce((sum, item) => sum + item.value, 0);
+            let cumulativePercent = 0;
+
+            const getCoordinatesForPercent = (percent) => {
+                const x = Math.cos(2 * Math.PI * percent);
+                const y = Math.sin(2 * Math.PI * percent);
+                return [x, y];
+            };
+
+            const selectedCharName = CHARACTERS[selectedId]?.jpName || "???";
+            const selectedCharColor = CHARACTERS[selectedId]?.color || "#fff";
+
+            return (
+                <div className="flex flex-col items-center w-full">
+                    <div className="relative w-64 h-64">
+                        <svg viewBox="-1.2 -1.2 2.4 2.4" className="w-full h-full transform -rotate-90 overflow-visible">
+                            {data.map((slice, index) => {
+                                const startPercent = cumulativePercent;
+                                const sliceValuePercent = slice.value / total;
+                                cumulativePercent += sliceValuePercent;
+                                const endPercent = cumulativePercent;
+
+                                const [startX, startY] = getCoordinatesForPercent(startPercent);
+                                const [endX, endY] = getCoordinatesForPercent(endPercent);
+                                const largeArcFlag = sliceValuePercent > 0.5 ? 1 : 0;
+                                const pathData = `M 0 0 L ${startX} ${startY} A 1 1 0 ${largeArcFlag} 1 ${endX} ${endY} Z`;
+
+                                const isSelected = slice.id === selectedId;
+                                const strokeColor = isSelected ? slice.strokeColor : "none";
+                                const strokeWidth = isSelected ? "0.08" : "0";
+
+                                const midPercent = startPercent + sliceValuePercent / 2;
+                                const [labelX, labelY] = getCoordinatesForPercent(midPercent);
+                                const textX = labelX * 0.7;
+                                const textY = labelY * 0.7;
+                                const percentage = Math.round(sliceValuePercent * 100);
+
+                                return (
+                                    <g key={slice.id}>
+                                        <path
+                                            d={pathData}
+                                            fill={slice.color}
+                                            stroke={strokeColor}
+                                            strokeWidth={strokeWidth}
+                                            className={`pie-slice ${isSelected ? 'selected' : ''}`}
+                                            onClick={() => setSelectedId(slice.id)}
+                                        />
+                                        {percentage > 3 && (
+                                            <text
+                                                x={textX}
+                                                y={textY}
+                                                className="pie-text"
+                                                transform={`rotate(90 ${textX} ${textY})`}
+                                                onClick={(e) => { e.stopPropagation(); setSelectedId(slice.id); }}
+                                            >
+                                                {percentage}%
+                                            </text>
+                                        )}
+                                    </g>
+                                );
+                            })}
+                        </svg>
+                    </div>
+                    <div className="mt-4 flex flex-col items-center animate-bounce">
+                        <span className="text-xs text-[#8d6e63] mb-1">▼ タッチしたキャラクター ▼</span>
+                        <span 
+                            className="px-6 py-2 rounded-full text-lg font-black text-[#5d4037] shadow-sm border-2 border-white transition-all duration-300"
+                            style={{ backgroundColor: selectedCharColor }}
+                        >
+                            {selectedCharName}
+                        </span>
+                    </div>
+                </div>
+            );
+        };
+
+        const CharacterList = () => {
+            return (
+                <div className="w-full mt-10 p-4 bg-white/60 rounded-3xl border-2 border-white">
+                    <h3 className="text-center font-bold text-[#5d4037] mb-4 text-lg">🌟 仲間たちの紹介</h3>
+                    <ul className="space-y-3 text-sm text-[#5d4037] font-medium">
+                        <li className="flex items-start gap-2">
+                            <span className="text-xl">🤡</span>
+                            <div>
+                                <span className="font-bold text-[#e57373]">LilLilu（リルリル）</span><br/>
+                                雨上がりの太陽タイプ【隠れた魅力：無邪気な愛され力】
+                            </div>
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="text-xl">🐰</span>
+                            <div>
+                                <span className="font-bold text-[#f06292]">Rosie（ロージー）</span><br/>
+                                春のそよ風タイプ【隠れた魅力：天真爛漫なハッピーオーラ】
+                            </div>
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="text-xl">🐸</span>
+                            <div>
+                                <span className="font-bold text-[#4db6ac]">Finn（フィン）</span><br/>
+                                夏の波しぶきタイプ【隠れた魅力：はじける開放感】
+                            </div>
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="text-xl">🐻</span>
+                            <div>
+                                <span className="font-bold text-[#ffb74d]">Bonbon（ボンボン）</span><br/>
+                                秋の夕焼けタイプ【隠れた魅力：ひたむきさと前向きさ】
+                            </div>
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="text-xl">🐘</span>
+                            <div>
+                                <span className="font-bold text-[#64b5f6]">Espie（エスピー）</span><br/>
+                                冬の毛布タイプ【隠れた魅力：深くて温かい包容力】
+                            </div>
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="text-xl">🦒</span>
+                            <div>
+                                <span className="font-bold text-[#fdd835]">Gigi（ジジ）</span><br/>
+                                夜明けの朝日タイプ【隠れた魅力：おだやかな見守り力】
+                            </div>
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="text-xl">🦄</span>
+                            <div>
+                                <span className="font-bold text-[#ba68c8]">Levy（レヴィ）</span><br/>
+                                夜空の星タイプ【隠れた魅力：静かなる癒やしの光】
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            );
+        };
+
+        const ShareButton = ({ platform, text }) => {
+            let url = "", bg = "", label = "";
+            if (platform === 'LINE') { url = `https://line.me/R/msg/text/?${encodeURIComponent(text)}`; bg = "bg-[#06C755]"; label = "LINE"; }
+            else if (platform === 'Threads') { url = `https://www.threads.net/intent/post?text=${encodeURIComponent(text)}`; bg = "bg-[#000000]"; label = "Threads"; }
+            else { url = `https://instagram.com`; bg = "bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500"; label = "Instagram"; }
             
-            // 12問から7問をランダムに選出 (超・高精度ルート分岐システムのシミュレーション)
-            // 毎回違う質問構成にすることで精度感を演出
-            const shuffledPool = shuffle([...questionPool]);
-            currentQuestions = shuffledPool.slice(0, 7);
-            
-            currentIndex = 0;
-            
-            // 画面切り替え
-            showScreen('quiz-screen');
-            loadQuestion();
-        }
+            return (
+                <a href={url} target="_blank" rel="noopener noreferrer" 
+                   className={`flex items-center justify-center px-6 py-3 rounded-2xl shadow-md ${bg} text-white hover:opacity-80 transition-opacity min-w-[100px] text-sm font-bold tracking-widest`}>
+                   {label}
+                </a>
+            );
+        };
 
-        // 画面表示切り替え関数
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
+        // --- Main App ---
 
-        // 質問読み込み
-        function loadQuestion() {
-            const q = currentQuestions[currentIndex];
-            document.getElementById('question-text').innerText = `Q${currentIndex + 1}. ${q.q}`;
-            document.getElementById('current-q-num').innerText = currentIndex + 1;
-            
-            // 質問画像をリセット（画像を質問ごとに変えたい場合はここでsrcを設定）
-            const qImg = document.getElementById('question-image');
-            qImg.style.display = 'block'; // プレースホルダーのテキストを隠すため
-            qImg.parentElement.querySelector('img').style.display = 'none'; // エラーハンドラが走った場合のため
-            qImg.src = `question_${currentIndex+1}.png`; // 仮の画像パス
+        const App = () => {
+            const [gameState, setGameState] = useState('start'); 
+            const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+            const [questions, setQuestions] = useState([]);
+            const [scores, setScores] = useState({});
+            const [resultChar, setResultChar] = useState(null);
 
-            const answersArea = document.getElementById('answers-area');
-            answersArea.innerHTML = '';
+            const startGame = () => {
+                const shuffled = [...QUESTIONS_POOL].sort(() => 0.5 - Math.random());
+                setQuestions(shuffled.slice(0, 7));
+                
+                const initialScores = {};
+                Object.keys(CHARACTERS).forEach(key => initialScores[key] = 1);
+                
+                setScores(initialScores);
+                setCurrentQuestionIndex(0);
+                setGameState('playing');
+                window.scrollTo(0, 0);
+            };
 
-            q.options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = 'btn';
-                btn.innerText = opt.text;
-                btn.onclick = () => answer(opt.type);
-                answersArea.appendChild(btn);
-            });
-        }
-
-        // 回答処理
-        function answer(type) {
-            if (scores[type] !== undefined) {
-                scores[type]++;
-            }
-            
-            currentIndex++;
-            if (currentIndex < currentQuestions.length) {
-                loadQuestion();
-            } else {
-                showLoading();
-            }
-        }
-
-        // 分析画面表示
-        function showLoading() {
-            showScreen('loading-screen');
-            setTimeout(showResult, 2500); // 2.5秒後に結果表示
-        }
-
-        // 結果表示処理
-        function showResult() {
-            // 最高得点のキャラを特定
-            let maxScore = -1;
-            let resultCharKey = '';
-            
-            // 同点の場合はランダム、あるいは定義順で最初のもの
-            Object.keys(scores).forEach(key => {
-                if (scores[key] > maxScore) {
-                    maxScore = scores[key];
-                    resultCharKey = key;
+            const handleAnswer = (pointKey) => {
+                setScores(prev => ({ ...prev, [pointKey]: prev[pointKey] + 10 }));
+                if (currentQuestionIndex < questions.length - 1) {
+                    setTimeout(() => {
+                        setCurrentQuestionIndex(prev => prev + 1);
+                        window.scrollTo(0,0);
+                    }, 200);
+                } else {
+                    setGameState('calculating');
                 }
-            });
+            };
 
-            const char = characters[resultCharKey];
+            useEffect(() => {
+                if (gameState === 'calculating') {
+                    setTimeout(() => {
+                        let maxScore = -1;
+                        let winnerKey = 'lillilu'; 
+                        Object.entries(scores).forEach(([key, value]) => {
+                            const finalValue = value + Math.random();
+                            if (finalValue > maxScore) {
+                                maxScore = finalValue;
+                                winnerKey = key;
+                            }
+                        });
+                        setResultChar(CHARACTERS[winnerKey]);
+                        setGameState('result');
+                        window.scrollTo(0, 0);
+                    }, 2500); 
+                }
+            }, [gameState, scores]);
 
-            // データの埋め込み
-            document.getElementById('result-image').src = `${char.id}.png`;
-            document.getElementById('result-image').style.display = 'block'; // エラーハンドラリセット用
-            document.getElementById('result-catchphrase').innerText = char.catchphrase.split('\n')[0]; // 改行があれば最初の行など
-            document.getElementById('result-name').innerText = char.name;
-            document.getElementById('result-charm-text').innerText = char.charm;
-            document.getElementById('result-desc').innerText = char.desc;
-            document.getElementById('result-advice').innerText = char.advice;
+            if (gameState === 'start') {
+                return (
+                    <div className="min-h-screen bg-polka flex flex-col items-center justify-center p-4">
+                        <div className="bg-white/90 backdrop-blur-sm rounded-[2.5rem] p-8 max-w-md w-full text-center card-shadow flex flex-col items-center border-4 border-white">
+                            <div className="w-24 h-24 mb-6 bg-rose-100 rounded-full flex items-center justify-center text-4xl animate-bounce">🎀</div>
+                            <h1 className="text-2xl md:text-3xl font-black text-[#5d4037] mb-4 leading-relaxed tracking-wide">
+                                リルリルと仲間たち診断<br/>
+                                <span className="text-lg text-rose-400">～あなたの隠れた魅力はなんだ！？～</span>
+                            </h1>
+                            <p className="text-sm font-bold text-[#8d6e63] mb-8 leading-relaxed">
+                                あなたにぴったりの7つの質問で診断するよ♡
+                            </p>
+                            <div className="w-full aspect-[4/5] rounded-2xl mb-8 overflow-hidden shadow-sm bg-white border-4 border-white">
+                                <SafeImage src="top.png" alt="トップ画像" className="w-full h-full object-cover" />
+                            </div>
+                            <button onClick={startGame} className="btn-push w-full bg-rose-300 hover:bg-rose-400 text-white font-black py-4 px-12 rounded-full text-xl shadow-lg transition-colors tracking-wider">
+                                診断スタート！
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
 
-            // ステキなところリスト生成
-            const pointsList = document.getElementById('result-points');
-            pointsList.innerHTML = '';
-            char.points.forEach(p => {
-                const li = document.createElement('li');
-                li.innerText = p;
-                pointsList.appendChild(li);
-            });
+            if (gameState === 'playing') {
+                const q = questions[currentQuestionIndex];
+                const progress = ((currentQuestionIndex + 1) / 7) * 100;
 
-            // 円グラフ生成 (conic-gradient)
-            // スコアに基づいて比率を出すが、結果キャラを目立たせる（光らせる）
-            // 全体の合計点を計算
-            let totalScore = 0;
-            Object.keys(scores).forEach(k => totalScore += scores[k]);
-            
-            // 7色の順序定義
-            const colorOrder = ['lillilu', 'rosy', 'finn', 'bonbon', 'espie', 'levy', 'gigi'];
-            
-            let gradientStr = '';
-            let currentDeg = 0;
+                return (
+                    <div className="min-h-screen bg-polka flex flex-col items-center justify-center p-4">
+                        <div className="w-full max-w-lg mb-4 flex items-center gap-2">
+                            <div className="flex-1 h-4 bg-white rounded-full overflow-hidden border border-rose-100">
+                                <div className="h-full bg-rose-300 transition-all duration-500 ease-out rounded-full" style={{ width: `${progress}%` }}></div>
+                            </div>
+                            <div className="text-rose-400 font-bold text-sm bg-white px-3 py-1 rounded-full shadow-sm">{currentQuestionIndex + 1} / 7</div>
+                        </div>
+                        <div className="bg-white/95 backdrop-blur rounded-[2rem] p-6 md:p-8 max-w-lg w-full card-shadow flex flex-col items-center min-h-[600px] justify-between">
+                            <div className="w-full">
+                                <div className="w-full aspect-square rounded-2xl mb-8 overflow-hidden shadow-sm bg-white border-4 border-white mx-auto max-w-[300px] md:max-w-full">
+                                    <SafeImage src={`q${q.id}.png`} alt={`質問${q.id}の画像`} className="w-full h-full object-cover" />
+                                </div>
+                                <h2 className="text-2xl md:text-3xl font-black text-[#5d4037] text-center mb-8 leading-relaxed whitespace-pre-wrap">{q.q}</h2>
+                            </div>
+                            <div className="w-full space-y-4">
+                                {q.options.map((opt, idx) => (
+                                    <button key={idx} onClick={() => handleAnswer(opt.point)} className="btn-push w-full bg-rose-50 border-2 border-rose-100 hover:bg-rose-100 text-[#5d4037] font-bold py-5 px-4 rounded-2xl transition-colors text-center text-lg whitespace-pre-wrap leading-relaxed block mx-auto">
+                                        {opt.text}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
 
-            // もし全問正解などで他が0点の場合、グラフが1色になるのを防ぐため、最低値を1として計算し直す（見た目のため）
-            // 今回はシンプルに実際のスコア比率で描画し、勝者を少し大きく見せる等の工夫はCSSのシャドウで行う
-            
-            // スコアが0の場合でも少し色が見えるように補正（Base: 1点）
-            let adjustedTotal = 0;
-            const adjustedScores = {};
-            colorOrder.forEach(key => {
-                let val = scores[key] || 0;
-                if(key === resultCharKey) val += 2; // 勝者を強調するためにボーナス加算
-                val += 1; // 0点回避
-                adjustedScores[key] = val;
-                adjustedTotal += val;
-            });
+            if (gameState === 'calculating') {
+                return (
+                    <div className="min-h-screen bg-polka flex flex-col items-center justify-center">
+                        <div className="animate-spin text-7xl mb-6 text-rose-300">🪄</div>
+                        <p className="text-3xl font-black text-rose-400 loading-text tracking-widest">分析中</p>
+                    </div>
+                );
+            }
 
-            colorOrder.forEach((key, index) => {
-                const ratio = adjustedScores[key] / adjustedTotal;
-                const deg = ratio * 360;
-                const color = characters[key].color;
-                
-                gradientStr += `${color} ${currentDeg}deg ${currentDeg + deg}deg`;
-                if (index < colorOrder.length - 1) gradientStr += ', ';
-                
-                currentDeg += deg;
-            });
+            if (gameState === 'result' && resultChar) {
+                const chartData = Object.keys(CHARACTERS).map(key => ({
+                    id: key,
+                    name: CHARACTERS[key].jpName,
+                    value: scores[key],
+                    color: CHARACTERS[key].color,
+                    strokeColor: CHARACTERS[key].strokeColor,
+                    isWinner: key === resultChar.id
+                }));
 
-            const chartPie = document.getElementById('chart-pie');
-            chartPie.style.background = `conic-gradient(${gradientStr})`;
-            
-            // 勝者の色で光らせる
-            chartPie.style.boxShadow = `0 0 20px 5px ${char.color}`;
+                return (
+                    <div className="min-h-screen bg-polka py-12 px-4 flex justify-center">
+                        <div className="bg-white/95 backdrop-blur rounded-[2.5rem] p-8 max-w-2xl w-full card-shadow flex flex-col items-center">
+                            <div className="text-center mb-6">
+                                <div className="text-md font-bold text-rose-400 mb-2">{resultChar.name}（{resultChar.jpName}）</div>
+                                <h2 className="text-3xl md:text-4xl font-black text-[#5d4037] flex flex-col items-center gap-2">
+                                    <span className="text-5xl mb-2">{resultChar.icon}</span>
+                                    <span>{resultChar.type}</span>
+                                </h2>
+                                <p className="text-[#8d6e63] font-bold mt-2">（{resultChar.jpName}）</p>
+                            </div>
+                            <div className="w-full max-w-sm aspect-square rounded-3xl mb-8 shadow-xl border-8 border-white overflow-hidden" style={{ backgroundColor: resultChar.color }}>
+                                <SafeImage src={resultChar.image} alt={resultChar.name} className="w-full h-full object-cover" />
+                            </div>
+                            <div className="text-center mb-8 w-full bg-white/60 rounded-3xl p-6 border-2 border-rose-50">
+                                <p className="text-rose-500 font-bold mb-4 text-xl">【隠れた魅力：{resultChar.charm || resultChar.charmShort}】</p>
+                                <p className="text-[#5d4037] leading-loose text-justify md:text-center text-lg">{resultChar.desc}</p>
+                            </div>
+                            <div className="w-full bg-[#fffcf5] rounded-3xl border-2 border-orange-100 p-8 mb-8 relative mt-6">
+                                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-orange-200 text-white px-8 py-1 rounded-full text-md font-bold shadow-sm tracking-widest">アドバイス</div>
+                                <p className="text-[#5d4037] leading-loose text-lg text-justify mt-2">{resultChar.advice}</p>
+                            </div>
+                            <div className="w-full mb-12 text-center">
+                                <h4 className="font-bold text-rose-400 mb-4 text-md">【ステキなところ】</h4>
+                                <div className="flex flex-wrap justify-center gap-3">
+                                    {resultChar.points.map((point, i) => (
+                                        <span key={i} className="text-[#5d4037] font-bold text-lg border-b-4 border-rose-200 px-4 pb-1 bg-white/50 rounded-t-xl">{point}</span>
+                                    ))}
+                                </div>
+                            </div>
+                            
+                            {/* 円グラフ */}
+                            <div className="w-full flex flex-col items-center mb-12">
+                                <h4 className="font-bold text-[#5d4037] mb-6 text-xl">成分分析</h4>
+                                <p className="text-xs text-[#8d6e63] mb-4">タッチしてね！</p>
+                                <div className="w-full max-w-xs">
+                                    <CustomPieChart data={chartData} winnerKey={resultChar.id} />
+                                </div>
+                            </div>
 
-            // シェアボタンのリンク生成
-            const shareText = encodeURIComponent(`私の隠れた魅力は...「${char.charm}」でした！\nキャラタイプ：${char.name}\n\n#リルリルと仲間たちキャラクター診断`);
-            const shareUrl = encodeURIComponent(window.location.href);
+                            {/* キャラクター一覧リスト */}
+                            <CharacterList />
 
-            document.getElementById('share-line').href = `https://social-plugins.line.me/lineit/share?url=${shareUrl}&text=${shareText}`;
-            // Instagramは直接シェアURLがないため、アプリを開くなどの挙動になりますが、ここでは一般的なURLとしておきます
-            document.getElementById('share-insta').href = `https://www.instagram.com/`; 
-            document.getElementById('share-threads').href = `https://www.threads.net/intent/post?text=${shareText}&url=${shareUrl}`;
+                            <div className="w-full space-y-8 mt-12">
+                                <button onClick={startGame} className="btn-push w-full bg-[#8d6e63] text-white font-black py-5 rounded-2xl shadow-md text-xl tracking-wider">もう一度診断する</button>
+                                <div>
+                                    <p className="text-center text-md font-bold text-rose-400 mb-4 tracking-wide">＼ 結果をシェアする ／</p>
+                                    <div className="flex flex-wrap justify-center gap-4">
+                                        <ShareButton platform="LINE" text={`私の診断結果は...【${resultChar.name}：${resultChar.type}】でした！\n隠れた魅力は「${resultChar.charm || resultChar.charmShort}」✨`} />
+                                        <ShareButton platform="Threads" text={`私の診断結果は...【${resultChar.name}：${resultChar.type}】でした！\n隠れた魅力は「${resultChar.charm || resultChar.charmShort}」✨`} />
+                                        <ShareButton platform="Instagram" text="" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+            return null;
+        };
 
-            showScreen('result-screen');
-        }
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
